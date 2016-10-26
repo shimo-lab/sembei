@@ -1,4 +1,4 @@
-sembei :rice_cracker: : segmentation-free word embedding method
+sembei : segmentation-free word embedding method
 ===================================================
 
 
