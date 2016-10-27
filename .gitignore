@@ -1,1 +1,7 @@
 *~
+
+*.pyc
+*.c
+build/
+
+sembei/__pycache__
