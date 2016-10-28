@@ -49,7 +49,7 @@ class Sembei(object):
             '''
 
             print(dt.datetime.today())
-            print(messages.format(**self))
+            print(messages.format(self.__dict__))
 
     def construct_cooccurrence_matrix(self, n_cores=1):
         '''
