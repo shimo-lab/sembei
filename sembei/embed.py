@@ -1,5 +1,6 @@
+import math
+import multiprocessing
 import datetime as dt
-from collections import Counter
 
 import numpy as np
 from scipy import sparse
@@ -40,6 +41,7 @@ class Sembei(object):
         self.n_iter_rsvd = n_iter_rsvd
 
         self.size_vocabulary = len(vocabulary)
+        self.dict_vocabulary = dict(zip(self.vocabulary, range(self.size_vocabulary)))
         self.max_n_ngram = max(len(s) for s in self.vocabulary)
 
         if self.verbose_level <= 1:
@@ -51,45 +53,47 @@ class Sembei(object):
             print(dt.datetime.today())
             print(messages.format(**self.__dict__))
 
+    def each_construct_matrices(self, pid, size_chunk, n_cores, size_string):
+        i_start = pid * size_chunk
+
+        if pid == n_cores - 1:
+            i_end = size_string
+        else:
+            # チャンクの境界にある n-gram を何個か無視することになるが気にしない
+            i_end = (pid + 1) * size_chunk - 1
+
+        retval = construct_cooccurrence_matrix(
+            self.string[i_start:i_end], self.dict_vocabulary,
+            self.size_window, self.size_vocabulary, self.max_n_ngram)
+
+        return retval
+
     def construct_cooccurrence_matrix(self, n_cores=1):
         '''
         n_cores
         '''
-        size_string = len(string)
-        size_chunk = math.ceil(size_string / n_processes)
-
-        def each_construct_matrices(pid):
-            i_start = pid * size_chunk
-
-            if pid == n_processes - 1:
-                i_end = size_string
-            else:
-                # チャンクの境界にある n-gram を何個か無視することになるが気にしない
-                i_end = (pid + 1) * size_chunk - 1
-
-            retval = construct_cooccurrence_matrix(
-                self.string[i_start:i_end], dict_vocabulary_all,
-                self.size_window, self.size_vocabulary, max_n_ngram)
-
-            return retval
+        size_string = len(self.string)
+        size_chunk = math.ceil(size_string / n_cores)
+        args = [(pid, size_chunk, n_cores, size_string) for pid in range(n_cores)]
 
         try:
-            pool = multiprocessing.Pool(n_processes)
-            callback = pool.map(each_construct_matrices, range(n_processes))
+            pool = multiprocessing.Pool(n_cores)
+            callback = pool.starmap(self.each_construct_matrices, args)
         finally:
             pool.close()
             pool.join()
 
-        nrow_H = self.size_vocabulary_all
-        ncol_H = 2 * self.size_context * self.size_vocabulary_all
+        nrow_H = self.size_vocabulary
+        ncol_H = 2 * self.size_window * self.size_vocabulary
 
         self.G1_diag = np.zeros(nrow_H)
         self.count_matrix = sparse.csc_matrix((nrow_H, ncol_H))
-        self.G2_diag = self.count_matrix.sum(axis=0).A.ravel()
 
         for c in callback:
             self.G1_diag += c[0]
             self.count_matrix += c[1]
+
+        self.G2_diag = self.count_matrix.sum(axis=0).A.ravel()
 
         # Print some informations
         if self.verbose_level <= 1:
@@ -118,11 +122,11 @@ class Sembei(object):
             plt.ylabel('singular values $\sigma_i$', fontsize=20)
             plt.show()
 
-    def get_vectors(self, normalize=True, gamma=0):
+    def get_vectors(self, normalize_vectors=True, gamma=0):
 
         vectors = sparse.diags((self.G1_diag + gamma)**(-1 / 4)) @ self.U
 
-        if normalize:
+        if normalize_vectors:
             vectors = normalize(vectors)
 
         return pd.DataFrame(vectors, index=self.vocabulary)
