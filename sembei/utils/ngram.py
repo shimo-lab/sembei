@@ -1,3 +1,5 @@
+import multiprocessing
+
 from .counting import lossycounting_ngram
 
 
@@ -47,31 +49,35 @@ def extract_topn_ngram(lines_str, width_ngram, n_extract):
     return vocabulary
 
 
-def extract_topn_ngram_lossycounting(line_str, width_ngram, n_extract_tuple):
-    def each_n_ngram(l):
-        width = l[0]
-        n_extract = l[1]
+def __extract_topn_ngram_lossycounting_each(lines_str, width_ngram, n_extract,
+                                            epsilon, support_threshold):
 
-        lc = lossycounting_ngram(
-            lines_str, n_ngram=width_ngram, epsilon=1e-6, support_threshold=1e-6)
+    lc = lossycounting_ngram(
+        lines_str, n_ngram=width_ngram,
+        epsilon=epsilon, support_threshold=support_threshold)
 
-        count_dict_sorted = sorted(lc.count_dict.items(), key=lambda x: x[1], reverse=True)
-        count_dict_extracted = count_dict_sorted[0:n_extract]
-        vocabulary = [k for k, v in count_dict_extracted]
+    count_dict_sorted = sorted(lc.count_dict.items(), key=lambda x: x[1], reverse=True)
+    count_dict_extracted = count_dict_sorted[0:n_extract]
+    vocabulary = [k for k, v in count_dict_extracted]
 
-        coverage = sum([v for k, v in count_dict_extracted]) / lc.n_char
+    coverage = sum([v for k, v in count_dict_extracted]) / lc.n_char
 
-        min_count = count_dict_extracted[-1]
+    min_count = count_dict_extracted[-1]
 
-        print('min count   :', min_count, lc.error_dict[min_count[0]])
-        print('# of {0}-gram : {1}'.format(width, len(lc.count_dict)))
-        print('Coverage    : {0}\n'.format(coverage))
+    print('min count   :', min_count, lc.error_dict[min_count[0]])
+    print('# of {0}-gram : {1}'.format(width_ngram, len(lc.count_dict)))
+    print('Coverage    : {0}\n'.format(coverage))
 
-        return vocabulary
+    return vocabulary
+
+
+def extract_topn_ngram_lossycounting(lines_str, width_ngram, n_extract_tuple,
+                                     epsilon, support_threshold, n_processes=1):
+    args = [(lines_str, t[0], t[1], epsilon, support_threshold) for t in n_extract_tuple]
 
     try:
-        pool = multiprocessing.Pool(7)
-        callback = pool.map(each_n_ngram, n_extract_tuple)
+        pool = multiprocessing.Pool(n_processes)
+        callback = pool.starmap(__extract_topn_ngram_lossycounting_each, args)
     finally:
         pool.close()
         pool.join()
@@ -79,3 +85,5 @@ def extract_topn_ngram_lossycounting(line_str, width_ngram, n_extract_tuple):
     vocabulary_all = []
     for c in callback:
         vocabulary_all.extend(c)
+
+    return vocabulary_all
