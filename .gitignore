@@ -1,7 +1,10 @@
 *~
 
+.python-version
 *.pyc
 *.c
+*.so
 build/
+*.egg-info
 
 sembei/__pycache__
