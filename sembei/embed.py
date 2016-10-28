@@ -44,12 +44,12 @@ class Sembei(object):
 
         if self.verbose_level <= 1:
             messages = '''
-            size_vocabulary : {size_vocabulary} \n
-            dim : {dim} \n
+            size_vocabulary : {size_vocabulary}
+            dim : {dim}
             '''
 
             print(dt.datetime.today())
-            print(messages.format(self.__dict__))
+            print(messages.format(**self.__dict__))
 
     def construct_cooccurrence_matrix(self, n_cores=1):
         '''
