@@ -1,3 +1,4 @@
+from .counting import lossycounting_ngram
 
 
 def extract_all_ngram(string, n):
@@ -51,7 +52,7 @@ def extract_topn_ngram_lossycounting(line_str, width_ngram, n_extract_tuple):
         width = l[0]
         n_extract = l[1]
 
-        lc = sembei.utils.counting.lossycounting_ngram(
+        lc = lossycounting_ngram(
             lines_str, n_ngram=width_ngram, epsilon=1e-6, support_threshold=1e-6)
 
         count_dict_sorted = sorted(lc.count_dict.items(), key=lambda x: x[1], reverse=True)

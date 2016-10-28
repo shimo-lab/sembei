@@ -7,7 +7,7 @@ path_cython = ['sembei/embed_inner.pyx', 'sembei/utils/counting.pyx']
 
 setup(
     name='sembei',
-    packages=['sembei'],
+    packages=['sembei', 'sembei.utils'],
     ext_modules=cythonize(path_cython),
     include_dirs=[np.get_include()]
 )
