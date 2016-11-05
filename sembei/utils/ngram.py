@@ -3,6 +3,9 @@ import multiprocessing
 from .counting import lossycounting_ngram
 
 
+string = ''
+
+
 def extract_all_ngram(string, n):
     '''Extract all n-gram from the string
 
@@ -49,11 +52,11 @@ def extract_topn_ngram(lines_str, width_ngram, n_extract):
     return vocabulary
 
 
-def __extract_topn_ngram_lossycounting_each(lines_str, width_ngram, n_extract,
+def __extract_topn_ngram_lossycounting_each(width_ngram, n_extract,
                                             epsilon, support_threshold):
 
     lc = lossycounting_ngram(
-        lines_str, n_ngram=width_ngram,
+        string, n_ngram=width_ngram,
         epsilon=epsilon, support_threshold=support_threshold)
 
     count_dict_sorted = sorted(lc.count_dict.items(), key=lambda x: x[1], reverse=True)
@@ -73,7 +76,10 @@ def __extract_topn_ngram_lossycounting_each(lines_str, width_ngram, n_extract,
 
 def extract_topn_ngram_lossycounting(lines_str, width_ngram, n_extract_tuple,
                                      epsilon, support_threshold, n_processes=1):
-    args = [(lines_str, t[0], t[1], epsilon, support_threshold) for t in n_extract_tuple]
+    global string
+    string = lines_str
+
+    args = [(t[0], t[1], epsilon, support_threshold) for t in n_extract_tuple]
 
     try:
         pool = multiprocessing.Pool(n_processes)
