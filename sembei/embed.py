@@ -53,17 +53,11 @@ class Sembei(object):
             print(dt.datetime.today())
             print(messages.format(**self.__dict__))
 
-    def each_construct_matrices(self, pid, size_chunk, n_cores, size_string):
-        i_start = pid * size_chunk
-
-        if pid == n_cores - 1:
-            i_end = size_string
-        else:
-            # チャンクの境界にある n-gram を何個か無視することになるが気にしない
-            i_end = (pid + 1) * size_chunk - 1
+    def each_construct_matrices(self, pid, substring, size_chunk,
+                                n_cores, size_string):
 
         retval = construct_cooccurrence_matrix(
-            self.string[i_start:i_end], self.dict_vocabulary,
+            substring, self.dict_vocabulary,
             self.size_window, self.size_vocabulary, self.max_n_ngram)
 
         return retval
@@ -74,7 +68,20 @@ class Sembei(object):
         '''
         size_string = len(self.string)
         size_chunk = math.ceil(size_string / n_cores)
-        args = [(pid, size_chunk, n_cores, size_string) for pid in range(n_cores)]
+
+        args = []
+
+        for pid in range(n_cores):
+            i_start = pid * size_chunk
+
+            if pid == n_cores - 1:
+                i_end = size_string
+            else:
+                # チャンクの境界にある n-gram を何個か無視することになるが気にしない
+                i_end = (pid + 1) * size_chunk - 1
+
+            args.append((pid, self.string[i_start:i_end],
+                         size_chunk, n_cores, size_string))
 
         try:
             pool = multiprocessing.Pool(n_cores)
