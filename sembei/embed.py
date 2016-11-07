@@ -53,52 +53,64 @@ class Sembei(object):
             print(dt.datetime.today())
             print(messages.format(**self.__dict__))
 
-    def each_construct_matrices(self, pid, substring, size_chunk,
-                                n_cores, size_string):
-
-        retval = construct_cooccurrence_matrix(
-            substring, self.dict_vocabulary,
-            self.size_window, self.size_vocabulary, self.max_n_ngram)
-
-        return retval
-
-    def construct_cooccurrence_matrix(self, n_cores=1):
+    def construct_cooccurrence_matrix(self, n_cores=1, n_chunk=1, n_chunk_pool=1):
         '''
-        n_cores
+        Parameters
+        ------------------------------
+        n_cores : integer (default=1)
+            Number of cores to use
         '''
         size_string = len(self.string)
-        size_chunk = math.ceil(size_string / n_cores)
+        size_chunk = math.ceil(size_string / n_chunk)
 
         args = []
 
-        for pid in range(n_cores):
+        for pid in range(n_chunk):
             i_start = pid * size_chunk
 
-            if pid == n_cores - 1:
+            if pid == n_chunk - 1:
                 i_end = size_string
             else:
                 # チャンクの境界にある n-gram を何個か無視することになるが気にしない
                 i_end = (pid + 1) * size_chunk - 1
 
-            args.append((pid, self.string[i_start:i_end],
-                         size_chunk, n_cores, size_string))
-
-        try:
-            pool = multiprocessing.Pool(n_cores)
-            callback = pool.starmap(self.each_construct_matrices, args)
-        finally:
-            pool.close()
-            pool.join()
+            args.append((self.string[i_start:i_end], self.dict_vocabulary,
+                         self.size_window, self.size_vocabulary, self.max_n_ngram))
 
         nrow_H = self.size_vocabulary
         ncol_H = 2 * self.size_window * self.size_vocabulary
 
         self.G1_diag = np.zeros(nrow_H)
-        self.count_matrix = sparse.csc_matrix((nrow_H, ncol_H))
+        self.count_matrix = sparse.csc_matrix((nrow_H, ncol_H), dtype=np.int64)
 
-        for c in callback:
-            self.G1_diag += c[0]
-            self.count_matrix += c[1]
+        # 以下バッドノウハウ．
+        # starmap に文字列を投げて，大きい疎行列+numpy配列を返す処理は，
+        # 本来はメモリ共有型並列処理などを使って実装するべき?だが，
+        # scipy.sparse が絡んでいるので色々難しい．
+        # そこで．小さめのチャンクに切ってから starmap に投げるようにしている．
+        # See also : http://bugs.python.org/issue17560
+
+        size_chunk_pool = math.ceil(len(args) / n_chunk_pool)
+
+        for i_chunk_pool in range(n_chunk_pool):
+            i_start = size_chunk_pool * i_chunk_pool
+
+            if i_chunk_pool == n_chunk_pool - 1:
+                i_end = len(args)
+            else:
+                i_end = size_chunk_pool * (i_chunk_pool + 1)
+            
+            try:
+                pool = multiprocessing.Pool(n_cores)
+                callback = pool.starmap(construct_cooccurrence_matrix,
+                                        args[i_start:i_end])
+            finally:
+                pool.close()
+                pool.join()
+
+            for c in callback:
+                self.G1_diag += c[0]
+                self.count_matrix += c[1]
 
         self.G2_diag = self.count_matrix.sum(axis=0).A.ravel()
 
