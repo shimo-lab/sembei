@@ -26,6 +26,6 @@ def evaluate_by_jawordsim(path_jawordsim, vectors, scatter_plot=False):
     coverage = similarities_ja.predict.notnull().mean()
     
     if scatter_plot:
-        similarities_ja.plot.scatter('predict', 'mean')
+        similarities_ja.plot.scatter('predict', 'mean', figsize=(5, 5))
 
     return (correlation, coverage, similarities_ja)
