@@ -3,12 +3,13 @@ from sklearn.decomposition import PCA
 import bokeh.plotting as bplt
 
 
-def get_topn_df(vectors, query_list, topn=10,
+def get_topn_df(sembei, query_list, topn=10,
                 remove_substring=False, print_n_occur=False):
     '''Generate pandas.DataFrame.
     
     Parameters
     ------------------------------
+    sembei : sembei.embed.Sembei
     query_list : list of str
     topn : integer (default=10)
     remove_substring : bool
@@ -16,6 +17,7 @@ def get_topn_df(vectors, query_list, topn=10,
     '''
 
     df_sims = dict()
+    vectors = sembei.get_vectors(normalize_vectors=True)
     
     for query in query_list:
         if query not in vectors.index:
@@ -29,7 +31,7 @@ def get_topn_df(vectors, query_list, topn=10,
         colname = query
         
         if print_n_occur:
-            n_appear = G1_diag[vocabulary_all.index(query)]
+            n_appear = sembei.G1_diag[sembei.vocabulary.index(query)]
             colname += '({0})'.format(int(n_appear))
             
         df_sims[colname] = similarities_topn
