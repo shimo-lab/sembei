@@ -4,7 +4,8 @@ import bokeh.plotting as bplt
 
 
 def get_topn_df(sembei, query_list, topn=10,
-                remove_substring=False, print_n_occur=False):
+                remove_substring=False, print_n_occur=False,
+                gamma=0.0):
     '''Generate pandas.DataFrame.
     
     Parameters
@@ -17,7 +18,7 @@ def get_topn_df(sembei, query_list, topn=10,
     '''
 
     df_sims = dict()
-    vectors = sembei.get_vectors(normalize_vectors=True)
+    vectors = sembei.get_vectors(normalize_vectors=True, gamma=gamma)
     
     for query in query_list:
         if query not in vectors.index:
