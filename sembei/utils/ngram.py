@@ -1,4 +1,5 @@
 import multiprocessing
+from collections import Counter
 
 from .counting import lossycounting_ngram
 
