@@ -5,7 +5,7 @@ import bokeh.plotting as bplt
 
 def get_topn_df(sembei, query_list, topn=10,
                 remove_substring=False, print_n_occur=False,
-                gamma=0.0):
+                replace_space=' ', gamma=0.0):
     '''Generate pandas.DataFrame.
     
     Parameters
@@ -38,7 +38,7 @@ def get_topn_df(sembei, query_list, topn=10,
         df_sims[colname] = similarities_topn
 
             
-    return pd.DataFrame(df_sims).applymap(lambda x: x.replace(' ', '_'))
+    return pd.DataFrame(df_sims).applymap(lambda x: x.replace(' ', replace_space))
 
 
 def plot_pca_bokeh(vectors_plot, font='IPAexGothic', fontsize='5pt',
