@@ -6,7 +6,7 @@ from cython import boundscheck
 cdef long SIZE_ARRAY = 10000000
 
 
-@boundscheck(False)
+#@boundscheck(False)
 def construct_cooccurrence_matrix(
         str lines_str, dict dict_vocabulary_all,
         long size_window, long size_vocabulary_all, long width_ngram_context):
