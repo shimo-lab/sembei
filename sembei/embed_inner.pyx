@@ -20,7 +20,7 @@ def construct_cooccurrence_matrix(
         long width, id_ngram, id_ngram_next, i, i_start
         long size_ngram, size_ngram_next
 
-    count_matrix = sparse.csc_matrix((size_vocabulary_all, 2 * size_window * size_vocabulary_all))
+    count_matrix = sparse.csc_matrix((size_vocabulary_all, 2 * size_vocabulary_all))
 
     for i in range(n_characters):
 
