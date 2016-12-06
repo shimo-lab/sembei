@@ -12,7 +12,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.style.use('ggplot')
 
-from .embed_inner import construct_cooccurrence_matrix
+from .embed_inner import construct_cooccurrence_matrix, construct_cooccurrence_matrix_context1
 
 
 class Sembei(object):
@@ -102,7 +102,7 @@ class Sembei(object):
             
             try:
                 pool = multiprocessing.Pool(n_cores)
-                callback = pool.starmap(construct_cooccurrence_matrix,
+                callback = pool.starmap(construct_cooccurrence_matrix_context1,
                                         args[i_start:i_end])
             finally:
                 pool.close()
