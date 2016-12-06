@@ -32,13 +32,14 @@ class Sembei(object):
     '''
 
     def __init__(self, string, vocabulary, dim, size_window=1,
-                 verbose_level=1, n_iter_rsvd=3):
+                 verbose_level=1, n_iter_rsvd=3, wide_window=True):
         self.string = string
         self.vocabulary = vocabulary
         self.dim = dim
         self.size_window = size_window
         self.verbose_level = verbose_level
         self.n_iter_rsvd = n_iter_rsvd
+        self.wide_window = wide_window
 
         self.size_vocabulary = len(vocabulary)
         self.dict_vocabulary = dict(zip(self.vocabulary, range(self.size_vocabulary)))
@@ -78,7 +79,7 @@ class Sembei(object):
                          self.size_window, self.size_vocabulary, self.max_n_ngram))
 
         nrow_H = self.size_vocabulary
-        ncol_H = 2 * self.size_window * self.size_vocabulary
+        ncol_H = 2 * self.size_vocabulary * (int(self.wide_window) + 1)
 
         self.G1_diag = np.zeros(nrow_H)
         self.count_matrix = sparse.csc_matrix((nrow_H, ncol_H), dtype=np.int64)

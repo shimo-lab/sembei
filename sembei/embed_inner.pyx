@@ -56,7 +56,7 @@ def construct_cooccurrence_matrix(
             index_added = np.arange(n_added, dtype=int)
             count_matrix_temp = sparse.csc_matrix(
                 (velues[index_added], (indices_row[index_added], indices_col[index_added])),
-                shape=(size_vocabulary_all, 2 * size_window * size_vocabulary_all))
+                shape=(size_vocabulary_all, 2 * size_vocabulary_all))
             count_matrix += count_matrix_temp
             n_added = 0
 
@@ -76,8 +76,10 @@ def construct_cooccurrence_matrix_context1(
         long n_characters = len(lines_str)
         long width, id_ngram, id_ngram_next, i, i_start, i_end, i_width
         long size_ngram, size_ngram_next
+        long nrow_count_matrix = size_vocabulary_all
+        long ncol_count_matrix = 4 * size_vocabulary_all
 
-    count_matrix = sparse.csc_matrix((size_vocabulary_all, 2 * size_vocabulary_all))
+    count_matrix = sparse.csc_matrix((nrow_count_matrix, ncol_count_matrix))
 
     for i in range(n_characters):
 
@@ -121,7 +123,7 @@ def construct_cooccurrence_matrix_context1(
             index_added = np.arange(n_added, dtype=int)
             count_matrix_temp = sparse.csc_matrix(
                 (velues[index_added], (indices_row[index_added], indices_col[index_added])),
-                shape=(size_vocabulary_all, 2 * size_window * size_vocabulary_all))
+                shape=(nrow_count_matrix, ncol_count_matrix))
             count_matrix += count_matrix_temp
             n_added = 0
 
