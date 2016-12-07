@@ -100,7 +100,7 @@ class Sembei(object):
                 i_end = len(args)
             else:
                 i_end = size_chunk_pool * (i_chunk_pool + 1)
-            
+
             try:
                 pool = multiprocessing.Pool(n_cores)
                 if self.wide_window:
