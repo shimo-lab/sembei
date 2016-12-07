@@ -88,7 +88,8 @@ class Sembei(object):
         # starmap に文字列を投げて，大きい疎行列+numpy配列を返す処理は，
         # 本来はメモリ共有型並列処理などを使って実装するべき?だが，
         # scipy.sparse が絡んでいるので色々難しい．
-        # そこで．小さめのチャンクに切ってから starmap に投げるようにしている．
+        # そこで．starmapの返り値が大きくなり過ぎない程度の
+        # 小さめのチャンクに切ってから starmap に投げるようにしている．
         # See also : http://bugs.python.org/issue17560
 
         size_chunk_pool = math.ceil(len(args) / n_chunk_pool)
