@@ -32,7 +32,8 @@ class Sembei(object):
     '''
 
     def __init__(self, string, vocabulary, dim, size_window=1,
-                 verbose_level=1, n_iter_rsvd=3, wide_window=True):
+                 verbose_level=1, n_iter_rsvd=3, wide_window=True,
+                 inc=1):
         self.string = string
         self.vocabulary = vocabulary
         self.dim = dim
@@ -44,6 +45,7 @@ class Sembei(object):
         self.size_vocabulary = len(vocabulary)
         self.dict_vocabulary = dict(zip(self.vocabulary, range(self.size_vocabulary)))
         self.max_n_ngram = max(len(s) for s in self.vocabulary)
+        self.inc = inc
 
         if self.verbose_level <= 1:
             messages = '''Parameters :
@@ -53,6 +55,7 @@ class Sembei(object):
             wide_window     : {wide_window}
             n_iter_rsvd     : {n_iter_rsvd}
             max_n_ngram     : {max_n_ngram}
+            inc             : {inc}
             '''
 
             print(dt.datetime.today())
@@ -80,7 +83,7 @@ class Sembei(object):
                 i_end = (pid + 1) * size_chunk - 1
 
             args.append((self.string[i_start:i_end], self.dict_vocabulary,
-                         self.size_window, self.size_vocabulary, self.max_n_ngram))
+                         self.size_window, self.size_vocabulary, self.max_n_ngram, self.inc))
 
         nrow_H = self.size_vocabulary
         ncol_H = 2 * self.size_vocabulary * (int(self.wide_window) + 1)

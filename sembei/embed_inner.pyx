@@ -8,7 +8,7 @@ cdef long SIZE_ARRAY = 10000000
 
 def construct_cooccurrence_matrix(
         str lines_str, dict dict_vocabulary_all,
-        long size_window, long size_vocabulary_all, long width_ngram_context):
+        long size_window, long size_vocabulary_all, long width_ngram_context, int inc):
     cdef:
         np.ndarray[np.int64_t, ndim = 1] indices_row = np.empty(SIZE_ARRAY, dtype=int)
         np.ndarray[np.int64_t, ndim = 1] indices_col = np.empty(SIZE_ARRAY, dtype=int)
@@ -66,12 +66,12 @@ def construct_cooccurrence_matrix(
 #@boundscheck(False)
 def construct_cooccurrence_matrix_widecontext(
         str lines_str, dict dict_vocabulary_all,
-        long size_window, long size_vocabulary_all, long width_ngram_context):
+        long size_window, long size_vocabulary_all, long width_ngram_context, int inc):
     cdef:
         np.ndarray[np.int64_t, ndim = 1] indices_row = np.empty(SIZE_ARRAY, dtype=int)
         np.ndarray[np.int64_t, ndim = 1] indices_col = np.empty(SIZE_ARRAY, dtype=int)
         np.ndarray[np.int64_t, ndim = 1] ngram_counts = np.zeros(size_vocabulary_all, dtype=int)
-        np.ndarray[np.int64_t, ndim = 1] velues = np.ones(SIZE_ARRAY, dtype=int)
+        np.ndarray[np.int64_t, ndim = 1] values = np.empty(SIZE_ARRAY, dtype=int)
         long n_added = 0
         long n_characters = len(lines_str)
         long width, id_ngram, id_ngram_next, i, i_start, i_end, i_width
@@ -114,26 +114,30 @@ def construct_cooccurrence_matrix_widecontext(
                         # Right context
                         indices_row[n_added] = id_ngram
                         indices_col[n_added] = id_ngram_next + 2 * size_vocabulary_all
+                        values[n_added] = inc
 
                         # Left context
                         indices_row[n_added + 1] = id_ngram_next
                         indices_col[n_added + 1] = id_ngram + size_vocabulary_all
+                        values[n_added + 1] = inc
 
                     else:
                         # Right context
                         indices_row[n_added] = id_ngram
                         indices_col[n_added] = id_ngram_next + 3 * size_vocabulary_all
+                        values[n_added] = 1
 
                         # Left context
                         indices_row[n_added + 1] = id_ngram_next
                         indices_col[n_added + 1] = id_ngram
+                        values[n_added + 1] = 1
 
                     n_added += 2
 
         if (n_added + 2 * width_ngram_context**3 > SIZE_ARRAY) or (i >= n_characters - 1):
             index_added = np.arange(n_added, dtype=int)
             count_matrix_temp = sparse.csc_matrix(
-                (velues[index_added], (indices_row[index_added], indices_col[index_added])),
+                (values[index_added], (indices_row[index_added], indices_col[index_added])),
                 shape=(nrow_count_matrix, ncol_count_matrix))
             count_matrix += count_matrix_temp
             n_added = 0
