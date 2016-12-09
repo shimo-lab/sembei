@@ -96,7 +96,7 @@ def construct_cooccurrence_matrix_widecontext(
                 continue
 
             for width in range(1, size_window + 1):
-                
+
                 i_end = i_start + width
 
                 if i_end >= n_characters:
@@ -118,7 +118,7 @@ def construct_cooccurrence_matrix_widecontext(
                         # Left context
                         indices_row[n_added + 1] = id_ngram_next
                         indices_col[n_added + 1] = id_ngram + size_vocabulary_all
-                        
+
                     else:
                         # Right context
                         indices_row[n_added] = id_ngram
