@@ -46,9 +46,13 @@ class Sembei(object):
         self.max_n_ngram = max(len(s) for s in self.vocabulary)
 
         if self.verbose_level <= 1:
-            messages = '''
+            messages = '''Parameters :
             size_vocabulary : {size_vocabulary}
-            dim : {dim}
+            dim             : {dim}
+            size_window     : {size_window}
+            wide_window     : {wide_window}
+            n_iter_rsvd     : {n_iter_rsvd}
+            max_n_ngram     : {max_n_ngram}
             '''
 
             print(dt.datetime.today())
