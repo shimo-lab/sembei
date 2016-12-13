@@ -74,7 +74,7 @@ def construct_cooccurrence_matrix_widecontext(
         np.ndarray[np.int64_t, ndim = 1] values = np.empty(SIZE_ARRAY, dtype=int)
         long n_added = 0
         long n_characters = len(lines_str)
-        long width, id_ngram, id_ngram_next, i, i_start, i_end, i_width
+        long width, id_ngram, id_ngram_next, i, i_start, i_end, i_width, inc_context
         long size_ngram, size_ngram_next
         long nrow_count_matrix = size_vocabulary_all
         long ncol_count_matrix = 4 * size_vocabulary_all
@@ -122,15 +122,17 @@ def construct_cooccurrence_matrix_widecontext(
                         values[n_added + 1] = inc
 
                     else:
+                        inc_context = inc - (width - i_width)
+
                         # Right context
                         indices_row[n_added] = id_ngram
                         indices_col[n_added] = id_ngram_next + 3 * size_vocabulary_all
-                        values[n_added] = 1
+                        values[n_added] = inc_context
 
                         # Left context
                         indices_row[n_added + 1] = id_ngram_next
                         indices_col[n_added + 1] = id_ngram
-                        values[n_added + 1] = 1
+                        values[n_added + 1] = inc_context
 
                     n_added += 2
 
