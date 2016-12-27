@@ -86,7 +86,7 @@ class Sembei(object):
                          self.size_window, self.size_vocabulary, self.max_n_ngram, self.inc))
 
         nrow_H = self.size_vocabulary
-        ncol_H = 2 * self.size_vocabulary * (int(self.wide_window) + 1)
+        ncol_H = self.size_vocabulary * (int(self.wide_window) + 2)
 
         self.G1_diag = np.zeros(nrow_H)
         self.count_matrix = sparse.csc_matrix((nrow_H, ncol_H), dtype=np.int64)

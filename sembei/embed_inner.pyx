@@ -77,7 +77,7 @@ def construct_cooccurrence_matrix_widecontext(
         long width, id_ngram, id_ngram_next, i, i_start, i_end, i_width, inc_context
         long size_ngram, size_ngram_next
         long nrow_count_matrix = size_vocabulary_all
-        long ncol_count_matrix = 4 * size_vocabulary_all
+        long ncol_count_matrix = 3 * size_vocabulary_all#4 * size_vocabulary_all
 
     count_matrix = sparse.csc_matrix((nrow_count_matrix, ncol_count_matrix))
 
@@ -122,11 +122,11 @@ def construct_cooccurrence_matrix_widecontext(
                         values[n_added + 1] = inc
 
                     else:
-                        inc_context = inc - (width - i_width)
+                        inc_context = size_window - (width - i_width) + 1
 
                         # Right context
                         indices_row[n_added] = id_ngram
-                        indices_col[n_added] = id_ngram_next + 3 * size_vocabulary_all
+                        indices_col[n_added] = id_ngram_next# + 3 * size_vocabulary_all
                         values[n_added] = inc_context
 
                         # Left context
