@@ -1,4 +1,4 @@
-sembei : segmentation-free word embeddings
+sembei : Segmentation-free version of Eigenwords (OSCCA)
 ===================================================
 
 
