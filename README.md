@@ -11,6 +11,7 @@ python setup.py build && python setup.py install
 
 ## How to use
 
+[\(oscca\-\)sembei の実行例](https://gist.github.com/oshikiri/da68f7b9b2aa9c626280176060266e34)
 
 
 ## Requirements
