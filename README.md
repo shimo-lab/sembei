@@ -19,7 +19,7 @@ python setup.py build && python setup.py install
 
 ## Requirements
 
-* anaconda3 (>4.1.1)
+* anaconda3 (>=4.1.1)
 * memory_profiler
 
 
