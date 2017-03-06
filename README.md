@@ -1,4 +1,4 @@
-sembei : segmentation-free word embeddings
+oscca-sembei : segmentation-free version of OSCCA
 ===================================================
 
 
