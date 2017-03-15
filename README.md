@@ -25,5 +25,5 @@ python setup.py build && python setup.py install
 
 ## References
 
-1. 押切 孝将, 下平 英寿. 単語分割を経由しない単語埋め込み. 言語処理学会第23回年次大会論文集. 言語処理学会, 2017年3月. (To appear)
+1. 押切 孝将, 下平 英寿. 単語分割を経由しない単語埋め込み. 言語処理学会第23回年次大会論文集, pp.258-261. 言語処理学会, 2017年3月.
 2. Dhillon, P. S., Foster, D. P., and Ungar, L. H. (2015). Eigenwords: Spectral word embeddings. Journal of Machine Learning Research, 16:3035–3078.
