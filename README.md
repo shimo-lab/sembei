@@ -1,4 +1,4 @@
-oscca-sembei : Segmentation-free version of Eigenwords (OSCCA)
+oscca-sembei : Segmentation-free version of OSCCA
 ===================================================
 
 単語分割を経由しない単語埋め込み手法 *segmentation-free word embeddings (sembei)* [1] の Python 実装．
@@ -15,16 +15,15 @@ python setup.py build && python setup.py install
 
 ## How to use
 
-[\(oscca\-\)sembei の実行例](https://gist.github.com/oshikiri/da68f7b9b2aa9c626280176060266e34)
+`./sample_code/` のファイルを参照．
 
 
 ## Requirements
 
-* anaconda3 (>=4.1.1)
-* memory_profiler
+* anaconda3 (>=4.2.0)
 
 
 ## References
 
-1. 押切 孝将, 下平 英寿. 単語分割を経由しない単語埋め込み. 言語処理学会第23回年次大会論文集, pp.258-261. 言語処理学会, 2017年3月.
-2. Dhillon, P. S., Foster, D. P., and Ungar, L. H. (2015). Eigenwords: Spectral word embeddings. Journal of Machine Learning Research, 16:3035–3078.
+1. 押切 孝将, 下平 英寿. **単語分割を経由しない単語埋め込み**. 言語処理学会第23回年次大会論文集, pp.258-261. 言語処理学会, 2017年3月.
+2. Dhillon, P. S., Foster, D. P., and Ungar, L. H. (2015). **Eigenwords: Spectral word embeddings**. Journal of Machine Learning Research, 16:3035–3078.
