@@ -5,12 +5,9 @@ import datetime as dt
 import numpy as np
 from scipy import sparse
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 from sklearn.utils.extmath import randomized_svd
-
-import matplotlib
-import matplotlib.pyplot as plt
-matplotlib.style.use('ggplot')
 
 from .embed_inner import construct_cooccurrence_matrix, construct_cooccurrence_matrix_widecontext
 
